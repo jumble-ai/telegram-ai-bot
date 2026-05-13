@@ -129,9 +129,16 @@ async def search_handler(
     command: CommandObject,
     bot: Bot,
     ai_client: OpenRouterClient,
-    search_client: TavilySearchClient,
+    search_client: TavilySearchClient | None,
 ) -> None:
     """Search the web by query from /search command."""
+    if not search_client:
+        await message.answer(
+            "🔎 Поиск сейчас недоступен.\n"
+            "Обратись к администратору."
+        )
+        return
+
     query = command.args.strip() if command.args else ""
     if not query:
         await message.answer(
@@ -164,7 +171,7 @@ async def search_handler(
 @router.message(Command("donate10"))
 async def donate_10_handler(
     message: Message,
-    crypto_pay_client: CryptoPayClient,
+    crypto_pay_client: CryptoPayClient | None,
 ) -> None:
     """Create a 10 USD donation invoice."""
     await _send_donation_invoice(message, crypto_pay_client, amount_usd=10)
@@ -173,7 +180,7 @@ async def donate_10_handler(
 @router.message(Command("donate100"))
 async def donate_100_handler(
     message: Message,
-    crypto_pay_client: CryptoPayClient,
+    crypto_pay_client: CryptoPayClient | None,
 ) -> None:
     """Create a 100 USD donation invoice."""
     await _send_donation_invoice(message, crypto_pay_client, amount_usd=100)
@@ -336,8 +343,8 @@ async def ai_answer_handler(
     bot: Bot,
     ai_client: OpenRouterClient,
     history_repository: HistoryRepository,
-    crypto_pay_client: CryptoPayClient,
-    calendar_client: GoogleCalendarClient,
+    crypto_pay_client: CryptoPayClient | None,
+    calendar_client: GoogleCalendarClient | None,
 ) -> None:
     """Answer text messages with an OpenRouter model."""
     if not message.text:
@@ -349,29 +356,31 @@ async def ai_answer_handler(
 
     await bot.send_chat_action(chat_id=message.chat.id, action=ChatAction.TYPING)
 
-    try:
-        invoice_intent = await ai_client.detect_invoice_intent(message.text)
-    except OpenRouterError as error:
-        logger.warning("Failed to detect invoice intent: %s", error)
-        invoice_intent = None
+    if crypto_pay_client:
+        try:
+            invoice_intent = await ai_client.detect_invoice_intent(message.text)
+        except OpenRouterError as error:
+            logger.warning("Failed to detect invoice intent: %s", error)
+            invoice_intent = None
 
-    if invoice_intent:
-        await _send_ai_invoice(message, crypto_pay_client, invoice_intent)
-        return
+        if invoice_intent:
+            await _send_ai_invoice(message, crypto_pay_client, invoice_intent)
+            return
 
-    try:
-        calendar_intent = await ai_client.detect_calendar_event_intent(
-            text=message.text,
-            now=datetime.now(ZoneInfo(calendar_client.time_zone)),
-            time_zone=calendar_client.time_zone,
-        )
-    except OpenRouterError as error:
-        logger.warning("Failed to detect calendar event intent: %s", error)
-        calendar_intent = None
+    if calendar_client:
+        try:
+            calendar_intent = await ai_client.detect_calendar_event_intent(
+                text=message.text,
+                now=datetime.now(ZoneInfo(calendar_client.time_zone)),
+                time_zone=calendar_client.time_zone,
+            )
+        except OpenRouterError as error:
+            logger.warning("Failed to detect calendar event intent: %s", error)
+            calendar_intent = None
 
-    if calendar_intent:
-        await _send_calendar_event(message, calendar_client, calendar_intent)
-        return
+        if calendar_intent:
+            await _send_calendar_event(message, calendar_client, calendar_intent)
+            return
 
     await history_repository.add_message(
         chat_id=message.chat.id,
@@ -460,9 +469,16 @@ async def _send_calendar_event(
 
 async def _send_donation_invoice(
     message: Message,
-    crypto_pay_client: CryptoPayClient,
+    crypto_pay_client: CryptoPayClient | None,
     amount_usd: int,
 ) -> None:
+    if not crypto_pay_client:
+        await message.answer(
+            "😕 Функция донатов сейчас недоступна.\n"
+            "Обратись к администратору."
+        )
+        return
+
     user_id = message.from_user.id if message.from_user else 0
 
     try:

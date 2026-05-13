@@ -16,12 +16,12 @@ class Settings:
     openrouter_stt_model: str
     openrouter_tts_model: str
     openrouter_tts_voice: str
-    tavily_api_key: str
-    crypto_pay_api_token: str
-    google_service_account_client_email: str
-    google_service_account_private_key: str
-    google_service_account_token_uri: str
-    google_calendar_id: str
+    tavily_api_key: str | None
+    crypto_pay_api_token: str | None
+    google_service_account_client_email: str | None
+    google_service_account_private_key: str | None
+    google_service_account_token_uri: str | None
+    google_calendar_id: str | None
     google_calendar_timezone: str
     database_path: Path
 
@@ -36,26 +36,6 @@ def load_settings() -> Settings:
     openrouter_api_key = getenv("OPENROUTER_API_KEY")
     if not openrouter_api_key:
         msg = "OPENROUTER_API_KEY is required. Put it into .env."
-        raise RuntimeError(msg)
-
-    tavily_api_key = getenv("TAVILY_API_KEY")
-    if not tavily_api_key:
-        msg = "TAVILY_API_KEY is required. Put it into .env."
-        raise RuntimeError(msg)
-
-    crypto_pay_api_token = getenv("CRYPTO_PAY_API_TOKEN")
-    if not crypto_pay_api_token:
-        msg = "CRYPTO_PAY_API_TOKEN is required. Put it into .env."
-        raise RuntimeError(msg)
-
-    google_service_account_client_email = getenv("GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL")
-    if not google_service_account_client_email:
-        msg = "GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL is required. Put it into .env."
-        raise RuntimeError(msg)
-
-    google_service_account_private_key = getenv("GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY")
-    if not google_service_account_private_key:
-        msg = "GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY is required. Put it into .env."
         raise RuntimeError(msg)
 
     return Settings(
@@ -75,15 +55,22 @@ def load_settings() -> Settings:
             "openai/gpt-4o-mini-tts-2025-12-15",
         ),
         openrouter_tts_voice=getenv("OPENROUTER_TTS_VOICE", "nova"),
-        tavily_api_key=tavily_api_key,
-        crypto_pay_api_token=crypto_pay_api_token,
-        google_service_account_client_email=google_service_account_client_email,
-        google_service_account_private_key=google_service_account_private_key,
+        tavily_api_key=getenv("TAVILY_API_KEY"),
+        crypto_pay_api_token=getenv("CRYPTO_PAY_API_TOKEN"),
+        google_service_account_client_email=getenv(
+            "GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL",
+        ),
+        google_service_account_private_key=getenv(
+            "GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY",
+        ),
         google_service_account_token_uri=getenv(
             "GOOGLE_SERVICE_ACCOUNT_TOKEN_URI",
             "https://oauth2.googleapis.com/token",
         ),
-        google_calendar_id=getenv("GOOGLE_CALENDAR_ID", "primary"),
-        google_calendar_timezone=getenv("GOOGLE_CALENDAR_TIMEZONE", "Europe/Moscow"),
+        google_calendar_id=getenv("GOOGLE_CALENDAR_ID"),
+        google_calendar_timezone=getenv(
+            "GOOGLE_CALENDAR_TIMEZONE",
+            "Europe/Moscow",
+        ),
         database_path=Path(getenv("DATABASE_PATH", "data/bot.sqlite3")),
     )

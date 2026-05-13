@@ -35,24 +35,24 @@
 |------------|----------|--------------|
 | `BOT_TOKEN` | Токен Telegram-бота | [@BotFather](https://t.me/BotFather) |
 | `OPENROUTER_API_KEY` | API-ключ OpenRouter | [openrouter.ai/keys](https://openrouter.ai/keys) |
-| `TAVILY_API_KEY` | API-ключ Tavily | [app.tavily.com](https://app.tavily.com) |
-| `CRYPTO_PAY_API_TOKEN` | Токен Crypto Pay | [@CryptoBot](https://t.me/CryptoBot) → Crypto Pay |
-| `GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL` | Email service account | [Google Cloud Console](https://console.cloud.google.com/) |
-| `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` | Приватный ключ service account | Google Cloud Console |
-| `GOOGLE_CALENDAR_ID` | ID календаря Google | Настройки календаря в Google |
 
-### Опциональные
+### Опциональные (для дополнительных функций)
 
-| Переменная | По умолчанию | Описание |
-|------------|--------------|----------|
-| `OPENROUTER_MODEL` | `openrouter/free` | Модель для текстового чата |
-| `OPENROUTER_IMAGE_MODEL` | `google/gemini-3.1-flash-image-preview` | Модель для генерации изображений |
-| `OPENROUTER_STT_MODEL` | `openai/gpt-4o-audio-preview` | Модель для распознавания речи |
-| `OPENROUTER_TTS_MODEL` | `openai/gpt-4o-mini-tts-2025-12-15` | Модель для синтеза речи |
-| `OPENROUTER_TTS_VOICE` | `nova` | Голос для TTS |
-| `GOOGLE_SERVICE_ACCOUNT_TOKEN_URI` | `https://oauth2.googleapis.com/token` | OAuth token endpoint |
-| `GOOGLE_CALENDAR_TIMEZONE` | `Europe/Moscow` | Часовой пояс для календаря |
-| `DATABASE_PATH` | `data/bot.sqlite3` | Путь к SQLite-базе |
+| Переменная | По умолчанию | Описание | Функция |
+|------------|--------------|----------|---------|
+| `TAVILY_API_KEY` | — | API-ключ Tavily | Поиск в интернете (`/search`) |
+| `CRYPTO_PAY_API_TOKEN` | — | Токен Crypto Pay | Счета и донаты |
+| `GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL` | — | Email service account | Google Calendar |
+| `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` | — | Приватный ключ service account | Google Calendar |
+| `GOOGLE_CALENDAR_ID` | — | ID календаря Google | Google Calendar |
+| `OPENROUTER_MODEL` | `openrouter/free` | Модель для текстового чата | AI-чат |
+| `OPENROUTER_IMAGE_MODEL` | `google/gemini-3.1-flash-image-preview` | Модель для генерации изображений | `/image` |
+| `OPENROUTER_STT_MODEL` | `openai/gpt-4o-audio-preview` | Модель для распознавания речи | Голосовые |
+| `OPENROUTER_TTS_MODEL` | `openai/gpt-4o-mini-tts-2025-12-15` | Модель для синтеза речи | `/tts` |
+| `OPENROUTER_TTS_VOICE` | `nova` | Голос для TTS | `/tts` |
+| `GOOGLE_SERVICE_ACCOUNT_TOKEN_URI` | `https://oauth2.googleapis.com/token` | OAuth token endpoint | Google Calendar |
+| `GOOGLE_CALENDAR_TIMEZONE` | `Europe/Moscow` | Часовой пояс для календаря | Google Calendar |
+| `DATABASE_PATH` | `data/bot.sqlite3` | Путь к SQLite-базе | Память диалогов |
 
 ## Настройка Google Calendar
 

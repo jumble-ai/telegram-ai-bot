@@ -16,9 +16,9 @@ from tg_agent.services.search import TavilySearchClient
 def build_dispatcher(
     ai_client: OpenRouterClient,
     history_repository: HistoryRepository,
-    search_client: TavilySearchClient,
-    crypto_pay_client: CryptoPayClient,
-    calendar_client: GoogleCalendarClient,
+    search_client: TavilySearchClient | None,
+    crypto_pay_client: CryptoPayClient | None,
+    calendar_client: GoogleCalendarClient | None,
 ) -> Dispatcher:
     """Create dispatcher and register routers."""
     dispatcher = Dispatcher(
@@ -57,24 +57,35 @@ def build_history_repository(settings: Settings) -> HistoryRepository:
     return HistoryRepository(database_path=settings.database_path)
 
 
-def build_search_client(settings: Settings) -> TavilySearchClient:
-    """Create configured Tavily search client."""
+def build_search_client(settings: Settings) -> TavilySearchClient | None:
+    """Create configured Tavily search client if API key is set."""
+    if not settings.tavily_api_key:
+        return None
     return TavilySearchClient(api_key=settings.tavily_api_key)
 
 
-def build_crypto_pay_client(settings: Settings) -> CryptoPayClient:
-    """Create configured Crypto Pay client."""
+def build_crypto_pay_client(settings: Settings) -> CryptoPayClient | None:
+    """Create configured Crypto Pay client if API token is set."""
+    if not settings.crypto_pay_api_token:
+        return None
     return CryptoPayClient(api_token=settings.crypto_pay_api_token)
 
 
-def build_calendar_client(settings: Settings) -> GoogleCalendarClient:
-    """Create configured Google Calendar client."""
+def build_calendar_client(settings: Settings) -> GoogleCalendarClient | None:
+    """Create configured Google Calendar client if credentials are set."""
+    if not settings.google_service_account_client_email:
+        return None
+    if not settings.google_service_account_private_key:
+        return None
+    if not settings.google_calendar_id:
+        return None
     return GoogleCalendarClient(
         service_account_info={
             "type": "service_account",
             "client_email": settings.google_service_account_client_email,
             "private_key": settings.google_service_account_private_key,
-            "token_uri": settings.google_service_account_token_uri,
+            "token_uri": settings.google_service_account_token_uri
+            or "https://oauth2.googleapis.com/token",
         },
         calendar_id=settings.google_calendar_id,
         time_zone=settings.google_calendar_timezone,
