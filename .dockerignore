@@ -1,0 +1,12 @@
+.env
+.git/
+.mypy_cache/
+.opencode/
+.pytest_cache/
+.ruff_cache/
+.venv/
+__pycache__/
+data/
+dist/
+google-service-account*.json
+jumbleai-467414-654f8ae5cd83.json

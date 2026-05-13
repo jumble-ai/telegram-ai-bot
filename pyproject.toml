@@ -1,0 +1,41 @@
+[project]
+name = "tg-agent"
+version = "0.1.0"
+description = "Minimal Telegram echo bot built with aiogram."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aiogram>=3.27,<4",
+    "aiosqlite>=0.20,<1",
+    "av>=14.0,<16",
+    "google-auth>=2.40,<3",
+    "httpx>=0.28.1,<1",
+    "requests>=2.32,<3",
+    "python-dotenv>=1.0.1,<2",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.15,<2",
+    "pytest>=8.3,<9",
+    "ruff>=0.9,<1",
+]
+
+[project.scripts]
+tg-agent = "tg_agent.main:run"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["tg_agent"]
